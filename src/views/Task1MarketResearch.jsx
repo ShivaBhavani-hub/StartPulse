@@ -1,295 +1,159 @@
 import React from "react";
-import { Doughnut, Bar } from "react-chartjs-2";
-import {
-  Chart as ChartJS,
-  ArcElement,
-  Tooltip,
-  Legend,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-} from "chart.js";
-import {
-  ShieldCheck,
-  AlertTriangle,
-  TrendingUp,
-  Flame,
-  PieChart,
-  Users,
-  Lightbulb,
-  CheckCircle2,
-} from "lucide-react";
+import { Doughnut } from "react-chartjs-2";
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
+import { ShieldCheck, AlertTriangle, Lightbulb, Flame, Award, Users, TrendingUp } from "lucide-react";
 
-// Register Chart.js components
-ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement);
+ChartJS.register(ArcElement, Tooltip, Legend);
 
 export default function Task1MarketResearch({ data }) {
-  if (!data) return null;
-
-  // Chart 1: Market Share Doughnut
-  const marketShareChart = {
-    labels: data.marketShare.map((m) => m.name),
+  const chartData = {
+    labels: data?.marketShare?.map((item) => item.name) || ["Leader", "Challenger", "Others"],
     datasets: [
       {
-        data: data.marketShare.map((m) => m.share),
-        backgroundColor: ["#6366f1", "#ec4899", "#f97316", "#10b981"],
-        borderWidth: 2,
-        borderColor: "#020617",
+        data: data?.marketShare?.map((item) => item.share) || [45, 30, 25],
+        backgroundColor: ["#6366f1", "#06b6d4", "#3b82f6"],
+        borderColor: "#0f172a",
+        borderWidth: 3,
       },
     ],
   };
 
-  // Chart 2: Competitor SKU Breadth Comparison Bar Chart
-  const skuComparisonChart = {
-    labels: ["Blinkit (Zomato)", "Zepto", "Swiggy Instamart"],
-    datasets: [
-      {
-        label: "Estimated SKU Catalog Breadth",
-        data: [20000, 11000, 9500],
-        backgroundColor: "#6366f1",
-        borderRadius: 8,
-      },
-    ],
+  const chartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { position: "bottom", labels: { color: "#94a3b8", font: { size: 11 } } },
+    },
   };
 
   return (
-    <div className="space-y-8 animate-fadeIn">
-      {/* Header Banner */}
-      <div className="bg-gradient-to-r from-slate-950 via-slate-900 to-indigo-950 border border-slate-800 rounded-2xl p-6 sm:p-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 shadow-xl">
-        <div>
-          <span className="text-xs font-bold tracking-widest text-indigo-400 uppercase">
-            Task 1: Market Research Deliverable
-          </span>
-          <h2 className="text-2xl sm:text-3xl font-black text-white mt-1">
-            {data.title}
-          </h2>
-          <p className="text-sm text-slate-400 mt-1">{data.scope}</p>
+    <div className="space-y-6 animate-fadeIn">
+      {/* Visual KPI Header Strip */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="bg-slate-900/90 border border-slate-800 p-4 rounded-2xl flex items-center gap-3 backdrop-blur-xl">
+          <div className="p-3 bg-indigo-500/10 text-indigo-400 rounded-xl">
+            <Award size={22} />
+          </div>
+          <div>
+            <div className="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">Position</div>
+            <div className="text-lg font-bold text-white">Category Leader</div>
+          </div>
         </div>
-        <div className="flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 px-3 py-1.5 rounded-lg text-xs font-semibold">
-          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-          ~46% Market Share Dominance
+        <div className="bg-slate-900/90 border border-slate-800 p-4 rounded-2xl flex items-center gap-3 backdrop-blur-xl">
+          <div className="p-3 bg-cyan-500/10 text-cyan-400 rounded-xl">
+            <TrendingUp size={22} />
+          </div>
+          <div>
+            <div className="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">Market Moat</div>
+            <div className="text-lg font-bold text-cyan-400">High Density</div>
+          </div>
+        </div>
+        <div className="bg-slate-900/90 border border-slate-800 p-4 rounded-2xl flex items-center gap-3 backdrop-blur-xl">
+          <div className="p-3 bg-emerald-500/10 text-emerald-400 rounded-xl">
+            <Users size={22} />
+          </div>
+          <div>
+            <div className="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">Target Cohort</div>
+            <div className="text-lg font-bold text-emerald-400">Urban Core</div>
+          </div>
+        </div>
+        <div className="bg-slate-900/90 border border-slate-800 p-4 rounded-2xl flex items-center gap-3 backdrop-blur-xl">
+          <div className="p-3 bg-purple-500/10 text-purple-400 rounded-xl">
+            <Lightbulb size={22} />
+          </div>
+          <div>
+            <div className="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">Primary Engine</div>
+            <div className="text-lg font-bold text-purple-400">Direct-to-App</div>
+          </div>
         </div>
       </div>
 
-      {/* Executive Summary & Architecture */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="md:col-span-2 bg-slate-950/80 backdrop-blur border border-slate-800 rounded-2xl p-6 shadow-lg">
-          <h3 className="text-xs font-bold text-indigo-400 uppercase tracking-wider mb-2 flex items-center gap-2">
-            <CheckCircle2 size={16} /> Executive Summary
+      {/* Main Visual Grid: Chart & 4-Quadrant SWOT Matrix */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        {/* Market Share Donut Chart */}
+        <div className="lg:col-span-5 bg-slate-900/90 border border-slate-800 p-6 rounded-2xl flex flex-col items-center justify-center backdrop-blur-xl">
+          <h3 className="text-sm font-bold text-slate-200 mb-4 tracking-wide uppercase text-center">
+            Competitive Market Share
           </h3>
-          <p className="text-sm text-slate-300 leading-relaxed">
-            {data.executiveSummary}
-          </p>
+          <div className="h-56 w-56 relative flex items-center justify-center">
+            <Doughnut data={chartData} options={chartOptions} />
+          </div>
         </div>
-        <div className="bg-slate-950/80 backdrop-blur border border-slate-800 rounded-2xl p-6 shadow-lg">
-          <h3 className="text-xs font-bold text-indigo-400 uppercase tracking-wider mb-2">
-            Fulfillment Architecture
-          </h3>
-          <p className="text-xs text-slate-400 leading-relaxed">
-            {data.fulfillment}
-          </p>
-        </div>
-      </div>
 
-      {/* SWOT Diagnostic Matrix */}
-      <div>
-        <h3 className="text-base font-extrabold text-white flex items-center gap-2 mb-4">
-          <ShieldCheck className="text-indigo-400" size={20} />
-          SWOT Diagnostic with Mitigation & Growth Levers
-        </h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* 4-Quadrant Visual SWOT Grid */}
+        <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-3">
           {/* Strengths */}
-          <div className="bg-slate-950/90 border border-emerald-900/40 rounded-2xl p-5 hover:border-emerald-500/50 transition">
-            <div className="flex items-center justify-between mb-3">
-              <h4 className="text-sm font-bold text-emerald-400 flex items-center gap-2">
-                <ShieldCheck size={16} /> STRENGTHS (INTERNAL)
-              </h4>
-              <span className="text-[10px] font-bold uppercase bg-emerald-950 text-emerald-300 border border-emerald-800 px-2 py-0.5 rounded">
-                Core Levers
-              </span>
+          <div className="bg-emerald-950/20 border border-emerald-500/30 p-4 rounded-2xl">
+            <div className="flex items-center gap-2 text-emerald-400 text-xs font-bold uppercase mb-2">
+              <ShieldCheck size={16} /> Strengths
             </div>
-            <div className="space-y-2.5 text-xs">
-              {data.swot.strengths.map((s, idx) => (
-                <div key={idx} className="p-3 rounded-xl bg-slate-900/80 border border-slate-800">
-                  <p className="font-bold text-slate-200">• {s.point}</p>
-                  <p className="text-slate-400 mt-1">
-                    <strong className="text-emerald-400">Strategic Action:</strong> {s.action}
-                  </p>
-                </div>
-              ))}
-            </div>
+            {data?.swot?.strengths?.map((s, idx) => (
+              <div key={idx} className="bg-slate-900/70 p-2.5 rounded-xl border border-emerald-500/20 mb-2 last:mb-0">
+                <div className="text-xs font-bold text-emerald-200">{s.point}</div>
+                <div className="text-[11px] text-slate-400 mt-0.5">⚡ {s.action}</div>
+              </div>
+            ))}
           </div>
 
           {/* Weaknesses */}
-          <div className="bg-slate-950/90 border border-rose-900/40 rounded-2xl p-5 hover:border-rose-500/50 transition">
-            <div className="flex items-center justify-between mb-3">
-              <h4 className="text-sm font-bold text-rose-400 flex items-center gap-2">
-                <AlertTriangle size={16} /> WEAKNESSES (INTERNAL)
-              </h4>
-              <span className="text-[10px] font-bold uppercase bg-rose-950 text-rose-300 border border-rose-800 px-2 py-0.5 rounded">
-                Mitigation Required
-              </span>
+          <div className="bg-rose-950/20 border border-rose-500/30 p-4 rounded-2xl">
+            <div className="flex items-center gap-2 text-rose-400 text-xs font-bold uppercase mb-2">
+              <AlertTriangle size={16} /> Weaknesses
             </div>
-            <div className="space-y-2.5 text-xs">
-              {data.swot.weaknesses.map((w, idx) => (
-                <div key={idx} className="p-3 rounded-xl bg-slate-900/80 border border-slate-800">
-                  <p className="font-bold text-slate-200">• {w.point}</p>
-                  <p className="text-slate-400 mt-1">
-                    <strong className="text-rose-400">Mitigation:</strong> {w.action}
-                  </p>
-                </div>
-              ))}
-            </div>
+            {data?.swot?.weaknesses?.map((w, idx) => (
+              <div key={idx} className="bg-slate-900/70 p-2.5 rounded-xl border border-rose-500/20 mb-2 last:mb-0">
+                <div className="text-xs font-bold text-rose-200">{w.point}</div>
+                <div className="text-[11px] text-slate-400 mt-0.5">🛠️ {w.action}</div>
+              </div>
+            ))}
           </div>
 
           {/* Opportunities */}
-          <div className="bg-slate-950/90 border border-blue-900/40 rounded-2xl p-5 hover:border-blue-500/50 transition">
-            <div className="flex items-center justify-between mb-3">
-              <h4 className="text-sm font-bold text-blue-400 flex items-center gap-2">
-                <TrendingUp size={16} /> OPPORTUNITIES (EXTERNAL)
-              </h4>
-              <span className="text-[10px] font-bold uppercase bg-blue-950 text-blue-300 border border-blue-800 px-2 py-0.5 rounded">
-                Growth Levers
-              </span>
+          <div className="bg-cyan-950/20 border border-cyan-500/30 p-4 rounded-2xl">
+            <div className="flex items-center gap-2 text-cyan-400 text-xs font-bold uppercase mb-2">
+              <Lightbulb size={16} /> Opportunities
             </div>
-            <div className="space-y-2.5 text-xs">
-              {data.swot.opportunities.map((o, idx) => (
-                <div key={idx} className="p-3 rounded-xl bg-slate-900/80 border border-slate-800">
-                  <p className="font-bold text-slate-200">• {o.point}</p>
-                  <p className="text-slate-400 mt-1">
-                    <strong className="text-blue-400">Growth Lever:</strong> {o.action}
-                  </p>
-                </div>
-              ))}
-            </div>
+            {data?.swot?.opportunities?.map((o, idx) => (
+              <div key={idx} className="bg-slate-900/70 p-2.5 rounded-xl border border-cyan-500/20 mb-2 last:mb-0">
+                <div className="text-xs font-bold text-cyan-200">{o.point}</div>
+                <div className="text-[11px] text-slate-400 mt-0.5">🚀 {o.action}</div>
+              </div>
+            ))}
           </div>
 
           {/* Threats */}
-          <div className="bg-slate-950/90 border border-amber-900/40 rounded-2xl p-5 hover:border-amber-500/50 transition">
-            <div className="flex items-center justify-between mb-3">
-              <h4 className="text-sm font-bold text-amber-400 flex items-center gap-2">
-                <Flame size={16} /> THREATS (EXTERNAL)
-              </h4>
-              <span className="text-[10px] font-bold uppercase bg-amber-950 text-amber-300 border border-amber-800 px-2 py-0.5 rounded">
-                Risk Defense
-              </span>
+          <div className="bg-amber-950/20 border border-amber-500/30 p-4 rounded-2xl">
+            <div className="flex items-center gap-2 text-amber-400 text-xs font-bold uppercase mb-2">
+              <Flame size={16} /> Threats
             </div>
-            <div className="space-y-2.5 text-xs">
-              {data.swot.threats.map((t, idx) => (
-                <div key={idx} className="p-3 rounded-xl bg-slate-900/80 border border-slate-800">
-                  <p className="font-bold text-slate-200">• {t.point}</p>
-                  <p className="text-slate-400 mt-1">
-                    <strong className="text-amber-400">Defense:</strong> {t.action}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Visual Analytics & Competitor Matrix */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Competitor Benchmark Table */}
-        <div className="lg:col-span-2 bg-slate-950/90 border border-slate-800 rounded-2xl p-6 shadow-lg">
-          <h3 className="text-sm font-bold text-white uppercase tracking-wider mb-4 flex items-center gap-2">
-            Competitor Benchmark Matrix
-          </h3>
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs text-slate-300">
-              <thead className="bg-slate-900 text-slate-400 uppercase text-[10px] tracking-wider border-b border-slate-800">
-                <tr>
-                  <th className="p-3">Platform</th>
-                  <th className="p-3">Est. Share</th>
-                  <th className="p-3">Core USP</th>
-                  <th className="p-3">Catalog Breadth</th>
-                  <th className="p-3">Retention Engine</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-800/60 font-medium">
-                {data.competitors.map((c, idx) => (
-                  <tr key={idx} className="hover:bg-slate-900/50">
-                    <td className="p-3 font-bold text-white">{c.name}</td>
-                    <td className="p-3 text-indigo-400 font-bold">{c.share}</td>
-                    <td className="p-3 text-slate-300">{c.usp}</td>
-                    <td className="p-3 text-slate-400">{c.breadth}</td>
-                    <td className="p-3 text-slate-400">{c.retention}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        {/* Live Market Share Doughnut */}
-        <div className="bg-slate-950/90 border border-slate-800 rounded-2xl p-6 flex flex-col items-center justify-between shadow-lg">
-          <div className="w-full text-center">
-            <h3 className="text-sm font-bold text-white uppercase tracking-wider flex items-center justify-center gap-2">
-              <PieChart size={16} className="text-indigo-400" /> Market Share Split
-            </h3>
-            <p className="text-[11px] text-slate-500 mt-1">Relative Quick Commerce Volume</p>
-          </div>
-          <div className="w-full h-48 flex justify-center items-center my-2">
-            <Doughnut
-              data={marketShareChart}
-              options={{
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                  legend: {
-                    position: "bottom",
-                    labels: { color: "#94a3b8", font: { size: 10 } },
-                  },
-                },
-                cutout: "70%",
-              }}
-            />
-          </div>
-        </div>
-      </div>
-
-      {/* Target Audience Personas & Recommendations */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Personas */}
-        <div className="bg-slate-950/90 border border-slate-800 rounded-2xl p-6 shadow-lg">
-          <h3 className="text-sm font-bold text-white uppercase tracking-wider mb-4 flex items-center gap-2">
-            <Users size={16} className="text-indigo-400" /> Target Audience Profiles
-          </h3>
-          <div className="space-y-4">
-            {data.personas.map((p, idx) => (
-              <div key={idx} className="p-4 rounded-xl bg-slate-900/70 border border-slate-800">
-                <div className="flex justify-between items-center mb-1">
-                  <h4 className="text-xs font-bold text-white">{p.title}</h4>
-                  <span className="text-[10px] font-bold text-indigo-400 bg-indigo-500/10 px-2 py-0.5 rounded">
-                    {p.badge}
-                  </span>
-                </div>
-                <p className="text-[11px] text-slate-400 mt-1"><strong>Profile:</strong> {p.traits}</p>
-                <p className="text-[11px] text-slate-400 mt-0.5"><strong>Core Need:</strong> {p.needs}</p>
-                <p className="text-[11px] text-emerald-400 mt-1"><strong>Buying Trigger:</strong> {p.trigger}</p>
+            {data?.swot?.threats?.map((t, idx) => (
+              <div key={idx} className="bg-slate-900/70 p-2.5 rounded-xl border border-amber-500/20 mb-2 last:mb-0">
+                <div className="text-xs font-bold text-amber-200">{t.point}</div>
+                <div className="text-[11px] text-slate-400 mt-0.5">🛡️ {t.action}</div>
               </div>
             ))}
           </div>
         </div>
+      </div>
 
-        {/* Actionable Recommendations */}
-        <div className="bg-slate-950/90 border border-slate-800 rounded-2xl p-6 shadow-lg">
-          <h3 className="text-sm font-bold text-white uppercase tracking-wider mb-4 flex items-center gap-2">
-            <Lightbulb size={16} className="text-indigo-400" /> Actionable Recommendations
-          </h3>
-          <div className="space-y-3">
-            {data.recommendations.map((r, idx) => (
-              <div key={idx} className="flex items-start gap-3 p-3.5 rounded-xl bg-slate-900/70 border border-slate-800">
-                <span className="w-7 h-7 rounded-lg bg-indigo-600/20 text-indigo-400 flex items-center justify-center font-bold text-xs flex-shrink-0">
-                  {r.num}
+      {/* Competitor Benchmark Comparison Cards */}
+      <div className="bg-slate-900/90 border border-slate-800 p-5 rounded-2xl backdrop-blur-xl">
+        <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Competitive Benchmarking</h3>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+          {data?.competitors?.map((comp, idx) => (
+            <div key={idx} className="bg-slate-950/80 border border-slate-800/80 p-3.5 rounded-xl flex flex-col justify-between">
+              <div className="flex justify-between items-center mb-2">
+                <span className="font-bold text-sm text-white">{comp.name}</span>
+                <span className="text-xs font-mono font-bold px-2 py-0.5 bg-indigo-500/10 text-indigo-400 rounded-md border border-indigo-500/20">
+                  {comp.share}
                 </span>
-                <div>
-                  <h4 className="text-xs font-bold text-white">{r.title}</h4>
-                  <p className="text-[11px] text-slate-400 mt-0.5 leading-normal">{r.text}</p>
-                </div>
               </div>
-            ))}
-          </div>
+              <div className="text-[11px] text-slate-400 space-y-1">
+                <div><span className="text-slate-500">Moat:</span> {comp.usp}</div>
+                <div><span className="text-slate-500">Retention:</span> {comp.retention}</div>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </div>
